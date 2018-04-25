@@ -1,49 +1,218 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+	<title>reveal.js</title>
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>[Intro about me]</section>
+			<section>
+				<section>What is Flow?</section>
+				<section>
+					A) A language?<br /> B) A linter?<br /> C) A new shinny tool that will solve all my problems?<br />
+					<div class="fragment" data-fragment-index="2">D) None of the above <br /></div>
+				</section>
+				<section>
+					"Flow is a static type checker for JS" <br /> - Flow.org
+					<aside class="notes">Explain about flow. Flow is a flawor we add on top of JS. During transpiling all flow stuff is removed. </aside>
+				</section>
+				<section>Simple types
+					<pre>
+						<code data-trim data-noescape
+							const a: boolean = true;
+
+							const b: number = 2;
+
+							const isOdd = (arg: number): boolean => !isEven(arg);
+
+							type A = {
+								prop: boolean
+							};
+						</code>
+					</pre>
+				</section>
+				<section>Exact types
+					<pre>
+						<code data-trim data-noescape
+							type A = {
+								prop: boolean
+							};
+
+							type ExactA = {|
+								props: boolean
+							|};
+
+							const a: A = { props: true, b: false };
+							const exactA: ExactA = { props: true, b: false };
+							const exactA2: $Exact<A> = { props: true, b: false };
+						</code>
+					</pre>
+				</section>
+				<section>Type Inference
+					<pre>
+						<code data-trim data-noescape
+							type FuncType = ({ foo: number }) => void
+							const outer = (f: FuncType) => f({foo: 42})
+
+							const inner = arg => arg.foo + arg.bar
+
+							outer(inner)
+						</code>
+					</pre>
+					<!--<div class="fragment" data-fragment-index="2"><img src="img/missing-b-error.png" /></div>-->
+				</section>
+					<section>Type Inference
+					<pre>
+						<code data-trim data-noescape
+							const outer = f => f({foo: 42})
+
+							const inner = (arg: {foo: number, bar: number} => arg.foo + arg.bar
+
+							outer(inner)
+						</code>
+					</pre>
+				</section>
+				<section>Structural Vs. Nominal typing</section>
+				<section>
+					<pre>
+						<code data-trim data-noescape>
+							const f1 = (input: { a: number }) => input.a;
+							const f2 = (input: A) => input.a;
+
+							class A { a: number; }
+							class B { a: number; }
+
+							f1({ a: 2 });
+							f1({ b: 2 }); // error!
+							f1(new A());
+							f1(new B());
+
+							f2({a : 2}); // error!
+							f2(new A());
+							f2(new B()); // error!
+						</code>
+					</pre>
+				</section>
+			</section>
+			<section>
+				<section>Why Flow?</section>
+				<section>Why static types? <br /> <br />
+					<ul data-fragment-index="1">
+						<li class="fragment" data-fragment-index="1">Speed of development</li>
+						<li class="fragment" data-fragment-index="2">Reduction in bugs</li>
+						<li class="fragment" data-fragment-index="3">Documentation</li>
+					</ul>
+				</section>
+				<section data-transition="default fade-out">Documentation
+					<pre>
+						<code data-trim data-noescape>
+							export default function startServer(options = {}, cb) {
+								const server = createServer(options);
+								_configureServer(server, options);
+								server.initMiddleware();
+								addRoutes(server);
+								server.listen(cb);
+								return server;
+							}
+						</code>
+					</pre>
+				</section>
+				<section data-transition="fade-in default">Documentation
+					<pre>
+						<code data-trim data-noescape>
+						export ServerOptions = {|
+							port: number;
+							endpoint: string;
+						|}
+
+						export type Callback =
+								(response: Response, next: NextCall) => void;
+
+						export default function startServer(
+							options: ServerOptions = {},
+							cb: Callback) {...}
+						</code>
+					</pre>
+				</section>
+				<section>
+					Lets see some examples!
+					<aside class="notes">
+						Plus two component
+						<aside>
+				</section>
+			</section>
+			<section>
+				<section>React + Flow
+					<aside class="notes">Flow has native support for React</aside>
+				</section>
+				<section>Class Component
+					<pre>
+						<code data-trim data-noescape>
+							type PropsType = {|
+								id: number
+							|};
+
+							type StateType = {/* ... */};
+
+							class TestComponent extends React.Component<PropsType, StateType> {
+							  render() {
+									return <div>{this.props.id}</div>;
+								}
+							}
+
+							export default () => <TestComponent id={2}/>
+						</code>
+					</pre>
+				</section>
+			</section>
+			<section>
+				<section>But what about HOC?</section>
+				<section>Lets see some real code!</section>
+			</section>
+			<section>
+				<section>But what about Apollo?</section>
+				<section>More code!</section>
+			</section>
 		</div>
+	</div>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+			], history: true
+		});
+	</script>
+</body>
+
 </html>
